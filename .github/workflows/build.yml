@@ -25,13 +25,22 @@ jobs:
           chmod +x build.sh dtc
           yes | ./build.sh
 
+      - name: Collect artifacts into workspace
+        if: always()
+        run: |
+          mkdir -p out
+          shopt -s nullglob
+          for f in ../*.zip *.tar.gz; do
+            [ -f "$f" ] && mv "$f" out/
+          done
+          echo "Collected files:"
+          ls -la out/ || true
+
       - name: Upload kernel zip
         uses: actions/upload-artifact@v4
         with:
           name: ginkgo-nethunter-kernel
-          path: |
-            ../*.zip
-            *.tar.gz
+          path: out/
           if-no-files-found: warn
 
       - name: Upload logs on failure
@@ -42,3 +51,4 @@ jobs:
           path: |
             .config
             *.log
+          if-no-files-found: ignore
