@@ -18,7 +18,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y git curl bison flex python3 gzip tar xz-utils \
             make gcc perl gawk swig pkg-config zstd device-tree-compiler bc \
-            libssl-dev libncurses-dev
+            libssl-dev libncurses-dev dwarves
+
+      - name: Verify pahole (needed for BTF)
+        run: |
+          which pahole
+          pahole --version
 
       - name: Run build script
         run: |
@@ -30,12 +35,9 @@ jobs:
         run: |
           mkdir -p out
           shopt -s nullglob
-          echo "--- Searching workspace root ---"
-          ls -la .
           for f in *.zip *.tar.gz; do
             [ -f "$f" ] && mv "$f" out/
           done
-          echo "--- Searching one level up (fallback) ---"
           for f in ../*.zip ../*.tar.gz; do
             [ -f "$f" ] && mv "$f" out/
           done
