@@ -30,7 +30,13 @@ jobs:
         run: |
           mkdir -p out
           shopt -s nullglob
-          for f in ../*.zip *.tar.gz; do
+          echo "--- Searching workspace root ---"
+          ls -la .
+          for f in *.zip *.tar.gz; do
+            [ -f "$f" ] && mv "$f" out/
+          done
+          echo "--- Searching one level up (fallback) ---"
+          for f in ../*.zip ../*.tar.gz; do
             [ -f "$f" ] && mv "$f" out/
           done
           echo "Collected files:"
